@@ -32,7 +32,7 @@ class CustomLevel {
         };
         const playerData = {
             id: 'flobdies',
-            src: path + "/images/gamify/chillguy.png",
+            src: path + "/images/gamify/blorb_idle.png",
             SCALE_FACTOR: 5,
             STEP_FACTOR: 1000,
             ANIMATION_RATE: 50,
