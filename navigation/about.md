@@ -7,19 +7,16 @@ comments: true
 
 ## As a conversation Starter
 
-Here are some places I have lived.
+Here are some places I come from. 
 
 <comment>
 Flags are made using Wikipedia images
 </comment>
 
 <style>
-    /* Style looks pretty compact, 
-       - grid-container and grid-item are referenced the code 
-    */
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Dynamic columns */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
     }
     .grid-item {
@@ -27,11 +24,11 @@ Flags are made using Wikipedia images
     }
     .grid-item img {
         width: 100%;
-        height: 100px; /* Fixed height for uniformity */
-        object-fit: contain; /* Ensure the image fits within the fixed height */
+        height: 100px;
+        object-fit: contain;
     }
     .grid-item p {
-        margin: 5px 0; /* Add some margin for spacing */
+        margin: 5px 0;
     }
 
     .image-gallery {
@@ -39,7 +36,7 @@ Flags are made using Wikipedia images
         flex-wrap: nowrap;
         overflow-x: auto;
         gap: 10px;
-        }
+    }
 
     .image-gallery img {
         max-height: 150px;
@@ -48,91 +45,136 @@ Flags are made using Wikipedia images
     }
 </style>
 
-<!-- This grid_container class is used by CSS styling and the id is used by JavaScript connection -->
-<div class="grid-container" id="grid_container">
-    <!-- content will be added here by JavaScript -->
-</div>
+
+<div class="grid-container" id="grid_container"></div>
+
+
+## Favorite Video Games
+<div class="grid-container" id="games_container"></div>
 
 <script>
-    // 1. Make a connection to the HTML container defined in the HTML div
-    var container = document.getElementById("grid_container"); // This container connects to the HTML div
 
-    // 2. Define a JavaScript object for our http source and our data rows for the Living in the World grid
-    var http_source = "https://upload.wikimedia.org/wikipedia/commons/";
-    var living_in_the_world = [
-        {"flag": "0/01/Flag_of_California.svg", "greeting": "Hey", "description": "California - forever"},
-        {"flag": "b/b9/Flag_of_Oregon.svg", "greeting": "Hi", "description": "Oregon - 9 years"},
-        {"flag": "b/be/Flag_of_England.svg", "greeting": "Alright mate", "description": "England - 2 years"},
-        {"flag": "e/ef/Flag_of_Hawaii.svg", "greeting": "Aloha", "description": "Hawaii - 2 years"},
-    ];
+var container = document.getElementById("grid_container");
+var gamesContainer = document.getElementById("games_container");
 
-    // 3a. Consider how to update style count for size of container
-    // The grid-template-columns has been defined as dynamic with auto-fill and minmax
+var http_source = "https://upload.wikimedia.org/wikipedia/commons/";
 
-    // 3b. Build grid items inside of our container for each row of data
-    for (const location of living_in_the_world) {
-        // Create a "div" with "class grid-item" for each row
-        var gridItem = document.createElement("div");
-        gridItem.className = "grid-item";  // This class name connects the gridItem to the CSS style elements
-        // Add "img" HTML tag for the flag
-        var img = document.createElement("img");
-        img.src = http_source + location.flag; // concatenate the source and flag
-        img.alt = location.flag + " Flag"; // add alt text for accessibility
-
-        // Add "p" HTML tag for the description
-        var description = document.createElement("p");
-        description.textContent = location.description; // extract the description
-
-        // Add "p" HTML tag for the greeting
-        var greeting = document.createElement("p");
-        greeting.textContent = location.greeting;  // extract the greeting
-
-        // Append img and p HTML tags to the grid item DIV
-        gridItem.appendChild(img);
-        gridItem.appendChild(description);
-        gridItem.appendChild(greeting);
-
-        // Append the grid item DIV to the container DIV
-        container.appendChild(gridItem);
+var living_in_the_world = [
+    {
+        flag: "0/01/Flag_of_California.svg",
+        greeting: "Hey",
+        description: "California - forever"
+    },
+    {
+        flag: "f/fa/Flag_of_the_People%27s_Republic_of_China.svg",
+        greeting: "你好",
+        description: "China - this is where my mother is from"
+    },
+    {
+        flag: "a/a4/Flag_of_the_United_States.svg",
+        greeting: "Hello",
+        description: "United States - this is where my father is from"
     }
+];
+
+for (const location of living_in_the_world) {
+    var item = document.createElement("div");
+    item.className = "grid-item";
+
+    var img = document.createElement("img");
+    img.src = http_source + location.flag;
+    img.alt = location.description + " Flag";
+
+    var desc = document.createElement("p");
+    desc.textContent = location.description;
+
+    var greet = document.createElement("p");
+    greet.textContent = location.greeting;
+
+    item.appendChild(img);
+    item.appendChild(desc);
+    item.appendChild(greet);
+
+    container.appendChild(item);
+}
+
+
+var http_source = "https://upload.wikimedia.org/wikipedia/";
+var favorite_games = [
+    {
+        title: "Counter Strike",
+        image: "en/f/f2/CS2_Cover_Art.jpg",
+        note: "Best FPS game right now"
+    },
+    {
+        title: "Valorant",
+        image: "en/b/ba/Valorant_cover.jpg",
+        note: "Only fun with friends"
+    },
+    {
+        title: "Hollow Knight",
+        image: "en/0/04/Hollow_Knight_first_cover_art.webp",
+        note: "Best platformer game ever"
+    },
+    {
+        title: "Cuphead",
+        image: "en/e/eb/Cuphead_%28artwork%29.png",
+        note: "Pure rage fuel"
+    }
+
+];
+
+
+for (const game of favorite_games) {
+    var item = document.createElement("div");
+    item.className = "grid-item";
+
+    var img = document.createElement("img");
+    img.src = http_source + game.image;
+    img.alt = game.title;
+
+    var title = document.createElement("p");
+    title.textContent = game.title;
+    title.style.fontWeight = "bold";
+
+    var note = document.createElement("p");
+    note.textContent = game.note;
+
+    item.appendChild(img);
+    item.appendChild(title);
+    item.appendChild(note);
+
+    gamesContainer.appendChild(item);
+}
 </script>
 
 ### Journey through Life
 
-Here is what I did at those places
+Here are some of my hobbies or things I like to do
 
-- 🏫 Lots of Elementary Schools in Tucson, LA, Honolulu, and Glendale (CA)
-- 🏫 Middle and High School in Glendale (CA), Hoover High graduated '77
-- 🎓 Glendale CA Community College, UCLA Extension, LA Wilshire Computer Tech School '77 to '79
-- ⛪ England, London Missionary for Church of Jesus Christ of Latter-day Saints '79 to '81
-- 💼 Culver City, Glendale CA founder at Ashton-Tate, original PC's dBase 2 and 3 '82 to '87
-- 🎓 Eugene Oregon Undergraduate CompSci Degree at University of Oregon (Go Ducks!) '89 to '91
-- 💼 Eugene Oregon, founder and owner @ Microniche `88, Point Control CAD CAM developer '91 to '96
-- 🏢 San Diego CA Qualcomm, Satellite Comm and 1st Mobile OS (BREW) '96 to '19
-- 👨‍🏫 San Diego CA Teacher of Computer Science @ Del Norte High School San Diego '19 to present
+- Playing video games  
+- Drawing  
+- Sleeping  
+- Skateboarding  
+- Playing trumpet  
 
 ### Culture, Family, and Fun
 
-Everything for me, as for many others, revolves around family and faith.
-
-- My mother told me that I was Danish, English. and Irish, here is my researched [family tree]({{site.baseurl}}/images/about/familytree.png)
-- My family is pretty big as I have been married twice, my 1st wife passed away.  We have had 5 kids, 4 adopted by me, 1 biological.  Plus, there are three grandkids.  My name to my grandkids is Abuilito.
-- The gallery of pics has some of my family, fun, culture and faith memories.
+- My family comes from many places, such as China, England, and Germany.  
+- I have one sibling and one dog.  
+- The gallery of pics has some of my family, fun, and culture.  
 
 <comment>
 Gallery of Pics, scroll to the right for more ...
 </comment>
+
 <div class="image-gallery">
-  <img src="{{site.baseurl}}/images/about/missionary.jpg" alt="Image 1">
-  <img src="{{site.baseurl}}/images/about/john_tamara.jpg" alt="Image 2">
-  <img src="{{site.baseurl}}/images/about/tamara_fam.jpg" alt="Image 3">
-  <img src="{{site.baseurl}}/images/about/surf.jpg" alt="Image 4">
-  <img src="{{site.baseurl}}/images/about/john_lora.jpg" alt="Image 5">
-  <img src="{{site.baseurl}}/images/about/lora_fam.jpg" alt="Image 6">
-  <img src="{{site.baseurl}}/images/about/lora_fam2.jpg" alt="Image 7">
-  <img src="{{site.baseurl}}/images/about/pj_party.jpg" alt="Image 8">
-  <img src="{{site.baseurl}}/images/about/trent_family.png" alt="Image 9">
-  <img src="{{site.baseurl}}/images/about/claire.jpg" alt="Image 10">
-  <img src="{{site.baseurl}}/images/about/grandkids.jpg" alt="Image 11">
-  <img src="{{site.baseurl}}/images/about/farm.jpg" alt="Image 12">
+  <img src="{{site.baseurl}}/images/about/some_guy.jpg" alt="Image 1">
+  <img src="{{site.baseurl}}/images/about/aura.JPG" alt="Image 2">
+  <img src="{{site.baseurl}}/images/about/chonk.JPG" alt="Image 3">
+  <img src="{{site.baseurl}}/images/about/sprite.JPG" alt="Image 4">
+  <img src="{{site.baseurl}}/images/about/67.JPEG" alt="Image 5">
+  <img src="{{site.baseurl}}/images/about/band.jpeg" alt="Image 6">
+  <img src="{{site.baseurl}}/images/about/knight.jpeg" alt="Image 7">
+  <img src="{{site.baseurl}}/images/about/blorb Background Removed.png" alt="Image 8">
 </div>

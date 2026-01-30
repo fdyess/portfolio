@@ -5,7 +5,34 @@ hide: true
 show_reading_time: false
 ---
 
-Hi! My name is [Your Full Name]
+Hi! My name is Finn.
+
+<a href="{{site.baseurl}}/tools/journey">
+    <button style="
+        background-color: #ff0000ff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;">
+        My Tools Journey
+    </button>
+</a>
+
+<a href="{{site.baseurl}}/about">
+    <button style="
+        background-color: #00aaffff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;">
+        About Me
+    </button>
+</a>
+
 
 ### Development Environment
 
@@ -30,17 +57,27 @@ Hi! My name is [Your Full Name]
 
 ### Class Progress
 
-> Here is my progress through coding, click to see these online
+> Here is my progress through coding, click to play these very fun games that work
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
     <a href="{{site.baseurl}}/snake" style="text-decoration: none;">
-        <div style="background-color: #00FF00; color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
-            Snake Game
+        <div style="background-color: #1e00ffff; color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+            Snake
         </div>
     </a>
     <a href="{{site.baseurl}}/turtle" style="text-decoration: none;">
         <div style="background-color: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
             Turtle
+        </div>
+    </a>
+     <a href="{{site.baseurl}}/platformer" style="text-decoration: none;">
+        <div style="background-color: #00ff40ff; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+            test
+        </div>
+    </a>
+    <a href="{{site.baseurl}}/breakout" style="text-decoration: none;">
+        <div style="background-color: #004cffff; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+            Breakout
         </div>
     </a>
 </div>
@@ -53,3 +90,4 @@ Hi! My name is [Your Full Name]
 > Feel free to reach out if you'd like to collaborate or learn more about our work.
 
 <p style="color: #2A7DB1;">Open Coding Society: <a href="https://opencodingsociety.com" style="color: #2A7DB1; text-decoration: underline;">Socials</a></p>
+
