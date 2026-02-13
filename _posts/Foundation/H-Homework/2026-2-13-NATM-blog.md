@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Homework Blog
-permalink: /homework-blog/
+title: Night @ the Museum Blog
+permalink: /natm-blog/
 comments: true
 ---
 

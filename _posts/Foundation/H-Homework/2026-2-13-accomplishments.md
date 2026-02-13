@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Homework Blog
-permalink: /homework-blog/
+title: My Accomplishments
+permalink: /accomplishment-blog/
 comments: true
 ---
 
