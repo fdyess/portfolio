@@ -22,7 +22,7 @@ Learning how to set up a repository in VScode was very important learning, as I 
 ```
 
 I also created some game hacks for games such as Snake and Breakout, visible down on the index page.
-
+<img src="{{site.baseurl}}/images/gamify/breakout.png" alt="Image 1">
 ## Sprint 2
 Here’s what I learned from team teaches:
 
@@ -46,9 +46,13 @@ Conditionals (P2): Conditionals (if, else if, else) allow your program to make d
 
 Functions (P2): Functions are reusable blocks of code that perform specific tasks and can take inputs (parameters) and return outputs.
 
+I also learned how to work in Jupyter notebooks and work with teammates when creating a lesson.
+<img src="{{site.baseurl}}/images/gamify/notebook.png" alt="Image 1">
+
 ## Sprint 3
 For this sprint, my group and I created an RPG game using the Game Runner and GameEngine framework. I learned how the game architecture works, including how the canvas is created, styled, and controlled with Start, Pause, Stop, and Reset buttons. I understood how levels are structured using classes with constructors that define the background, player, NPCs, and other game objects stored in the this.classes array. 
 
 While building our RPG, I practiced object-oriented programming by working with classes for players, environments, and interactions. I learned how the game loop updates and renders objects, how keyboard input controls movement (WASD/arrow keys), and how interactions are triggered with keys like E or Enter. 
-
+<img src="{{site.baseurl}}/images/gamify/ocean.png" alt="Image 1">
 I also gained experience debugging using the browser console, fixing import/export errors, adjusting player speed and position, and making sure assets loaded correctly. Overall, this sprint helped me better understand game mechanics like collision detection, sprite animation, event handling, and state management while collaborating with a team to design a functional RPG game.
+<img src="{{site.baseurl}}/images/gamify/hitbox.png" alt="Image 1">
