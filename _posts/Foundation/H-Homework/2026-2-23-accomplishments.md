@@ -53,6 +53,6 @@ I also learned how to work in Jupyter notebooks and work with teammates when cre
 For this sprint, my group and I created an RPG game using the Game Runner and GameEngine framework. I learned how the game architecture works, including how the canvas is created, styled, and controlled with Start, Pause, Stop, and Reset buttons. I understood how levels are structured using classes with constructors that define the background, player, NPCs, and other game objects stored in the this.classes array. 
 
 While building our RPG, I practiced object-oriented programming by working with classes for players, environments, and interactions. I learned how the game loop updates and renders objects, how keyboard input controls movement (WASD/arrow keys), and how interactions are triggered with keys like E or Enter. 
-<img src="{{site.baseurl}}/images/gamify/ocean.png" alt="Image 1">
+<img src="{{site.baseurl}}/images/gamify/ocean.PNG" alt="Image 1">
 I also gained experience debugging using the browser console, fixing import/export errors, adjusting player speed and position, and making sure assets loaded correctly. Overall, this sprint helped me better understand game mechanics like collision detection, sprite animation, event handling, and state management while collaborating with a team to design a functional RPG game.
 <img src="{{site.baseurl}}/images/gamify/hitbox.png" alt="Image 1">
