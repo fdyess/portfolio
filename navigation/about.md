@@ -169,12 +169,9 @@ Gallery of Pics, scroll to the right for more ...
 </comment>
 
 <div class="image-gallery">
-  <img src="{{site.baseurl}}/images/about/some_guy.jpg" alt="Image 1">
-  <img src="{{site.baseurl}}/images/about/aura.JPG" alt="Image 2">
-  <img src="{{site.baseurl}}/images/about/chonk.JPG" alt="Image 3">
-  <img src="{{site.baseurl}}/images/about/sprite.JPG" alt="Image 4">
-  <img src="{{site.baseurl}}/images/about/67.JPEG" alt="Image 5">
-  <img src="{{site.baseurl}}/images/about/band.jpeg" alt="Image 6">
-  <img src="{{site.baseurl}}/images/about/knight.jpeg" alt="Image 7">
-  <img src="{{site.baseurl}}/images/about/blorb Background Removed.png" alt="Image 8">
+  <img src="{{site.baseurl}}/images/about/sky.JPG" alt="Image 1">
+  <img src="{{site.baseurl}}/images/about/sun.JPG" alt="Image 2">
+  <img src="{{site.baseurl}}/images/about/pokemon.JPEG" alt="Image 3">
+  <img src="{{site.baseurl}}/images/about/milk.JPG" alt="Image 4">
+  <img src="{{site.baseurl}}/images/about/arcade.JPG" alt="Image 5">
 </div>
