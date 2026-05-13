@@ -1,0 +1,270 @@
+// Third Level — The Maze of Shadows (sublevel)
+// Save as: assets/js/GameEnginev1.1/GameLevelMazeSub.js
+
+import GameEnvBackground from './essentials/GameEnvBackground.js';
+import Player from './essentials/Player.js';
+import Npc from './essentials/Npc.js';
+import Barrier from './essentials/Barrier.js';
+import DialogueSystem from './essentials/DialogueSystem.js';
+import GameControl from './essentials/GameControl.js';
+import GameLevelDoors from './GameLevelDoors.js';
+import Coin from './Coin.js';
+
+class GameLevelMazeSub {
+  constructor(gameEnv) {
+    console.log("Initializing GameLevelMazeSub...");
+
+    this.gameEnv = gameEnv;
+
+    let width  = gameEnv.innerWidth;
+    let height = gameEnv.innerHeight;
+    let path   = gameEnv.path;
+
+    // ── Background ────────────────────────────────────────────────────────────
+    const image_data_cave = {
+      name: 'maze',
+      greeting: "The walls close in around you...",
+      src: path + "/images/gamify/dungeon.png",
+      pixels: { height: 597, width: 340 }
+    };
+
+    // ── Player ────────────────────────────────────────────────────────────────
+    const OCTOPUS_SCALE_FACTOR = 9;
+    const sprite_data_octopus = {
+      id: 'Octopus',
+      greeting: "I must find my way through...",
+      src: path + "/images/gamify/octopus.png",
+      SCALE_FACTOR: OCTOPUS_SCALE_FACTOR,
+      STEP_FACTOR: 1000,
+      ANIMATION_RATE: 50,
+      GRAVITY: true,
+      INIT_POSITION: { x: 0.05, y: 0.75 },
+      pixels: { height: 250, width: 167 },
+      orientation: { rows: 3, columns: 2 },
+      down:      { row: 0, start: 0, columns: 2 },
+      downLeft:  { row: 0, start: 0, columns: 2, mirror: true, rotate:  Math.PI / 16 },
+      downRight: { row: 0, start: 0, columns: 2,               rotate: -Math.PI / 16 },
+      left:      { row: 1, start: 0, columns: 2, mirror: true },
+      right:     { row: 1, start: 0, columns: 2 },
+      up:        { row: 0, start: 0, columns: 2 },
+      upLeft:    { row: 1, start: 0, columns: 2, mirror: true, rotate: -Math.PI / 16 },
+      upRight:   { row: 1, start: 0, columns: 2,               rotate:  Math.PI / 16 },
+      hitbox: { widthPercentage: 0.45, heightPercentage: 0.2 },
+      keypress: { up: 87, left: 65, down: 83, right: 68 }
+    };
+
+    // ── Floor & Ledges (all regular Barriers) ─────────────────────────────────
+    //
+    // Zigzag staircase — each ledge overlaps ~20% with the next so the
+    // player can make the jump. NPCs sit on ledges 2, 4 and 5.
+    //
+    //   ledge5  ░░░░░░░░░░░░░░░░░░░░░░░░░░░  (x 0.55–0.95, y ~0.12)
+    //   ledge4  ░░░░░░░░░░░░░░░░░░░░         (x 0.10–0.60, y ~0.27)
+    //   ledge3  ░░░░░░░░░░░░░░░░░░░░░░░░░░░  (x 0.40–0.95, y ~0.43)
+    //   ledge2  ░░░░░░░░░░░░░░░░░░░░         (x 0.05–0.55, y ~0.58)
+    //   ledge1  ░░░░░░░░░░░░░░░░░░░░░░░░░░░  (x 0.00–0.50, y ~0.78)
+    //   floor   ═══════════════════════════  (y 0.90)
+    //
+    // The player starts above ledge1 and must climb up-right, up-left, …
+
+    const floor  = { id: 'floor',  x: 0,                        y: Math.round(height * 0.90), width: width,                       height: Math.round(height * 0.10), visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+    const ledge1 = { id: 'ledge1', x: 0,                        y: Math.round(height * 0.78), width: Math.round(width  * 0.50),   height: 18,                        visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+    const ledge2 = { id: 'ledge2', x: Math.round(width * 0.05), y: Math.round(height * 0.58), width: Math.round(width  * 0.50),   height: 18,                        visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+    const ledge3 = { id: 'ledge3', x: Math.round(width * 0.40), y: Math.round(height * 0.43), width: Math.round(width  * 0.55),   height: 18,                        visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+    const ledge4 = { id: 'ledge4', x: Math.round(width * 0.10), y: Math.round(height * 0.27), width: Math.round(width  * 0.50),   height: 18,                        visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+    const ledge5 = { id: 'ledge5', x: Math.round(width * 0.55), y: Math.round(height * 0.12), width: Math.round(width  * 0.40),   height: 18,                        visible: true, hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 }, fromOverlay: true };
+
+    // ── NPCs ──────────────────────────────────────────────────────────────────
+
+    const sprite_greet_shadow = "Keep climbing. The exit is above you.";
+    const sprite_data_shadow = {
+      id: 'Whispering Shadow',
+      greeting: sprite_greet_shadow,
+      src: path + "/images/gamify/tux.png",
+      SCALE_FACTOR: 10,
+      ANIMATION_RATE: 50,
+      pixels: { height: 256, width: 352 },
+      INIT_POSITION: { x: 0.30, y: 0.48 },   // sits on ledge2
+      orientation: { rows: 8, columns: 11 },
+      down: { row: 5, start: 0, columns: 3 },
+      hitbox: { widthPercentage: 0.1, heightPercentage: 0.2 },
+      dialogues: [
+        "Keep climbing. The exit is above you.",
+        "Each step brings you closer. Don't look down.",
+        "I've been here a while. You're the first to make it this far.",
+        "The top platform. That's where you need to go."
+      ],
+      reaction: function() {
+        if (this.dialogueSystem) this.showReactionDialogue();
+        else console.log(sprite_greet_shadow);
+      },
+      interact: function() {
+        if (this.dialogueSystem && this.dialogueSystem.isDialogueOpen()) {
+          this.dialogueSystem.closeDialogue();
+          return;
+        }
+        if (!this.dialogueSystem) this.dialogueSystem = new DialogueSystem();
+        this.showRandomDialogue();
+      }
+    };
+
+    const sprite_greet_lantern = "Almost there. One more jump.";
+    const sprite_data_lantern = {
+      id: 'Lantern Keeper',
+      greeting: sprite_greet_lantern,
+      src: path + "/images/gamify/octocat.png",
+      SCALE_FACTOR: 10,
+      ANIMATION_RATE: 50,
+      pixels: { height: 301, width: 801 },
+      INIT_POSITION: { x: 0.35, y: 0.17 },   // sits on ledge4
+      orientation: { rows: 1, columns: 4 },
+      down: { row: 0, start: 0, columns: 3 },
+      hitbox: { widthPercentage: 0.1, heightPercentage: 0.1 },
+      dialogues: [
+        "Almost there. One more jump.",
+        "The warden is just above. Don't stop now.",
+        "You've climbed further than most.",
+        "I can see the exit from here. Keep going."
+      ],
+      reaction: function() {
+        if (this.dialogueSystem) this.showReactionDialogue();
+        else console.log(sprite_greet_lantern);
+      },
+      interact: function() {
+        if (this.dialogueSystem && this.dialogueSystem.isDialogueOpen()) {
+          this.dialogueSystem.closeDialogue();
+          return;
+        }
+        if (!this.dialogueSystem) this.dialogueSystem = new DialogueSystem();
+        this.showRandomDialogue();
+      }
+    };
+
+    const sprite_greet_warden = "You made it through. The exit is right here.";
+    const sprite_data_warden = {
+      id: 'Exit Warden',
+      greeting: sprite_greet_warden,
+      src: path + "/images/gamify/robot.png",
+      SCALE_FACTOR: 10,
+      ANIMATION_RATE: 100,
+      pixels: { height: 316, width: 627 },
+      INIT_POSITION: { x: 0.75, y: 0.02 },   // sits on ledge5
+      orientation: { rows: 3, columns: 6 },
+      down: { row: 1, start: 0, columns: 6 },
+      hitbox: { widthPercentage: 0.1, heightPercentage: 0.2 },
+      dialogues: [
+        "You made it. Not many do.",
+        "The maze is behind you now. Step through.",
+        "Quickly — something is still down there. Go."
+      ],
+      reaction: function() {
+        if (this.dialogueSystem) this.showReactionDialogue();
+        else console.log(sprite_greet_warden);
+      },
+      interact: function() {
+        if (this.dialogueSystem && this.dialogueSystem.isDialogueOpen()) {
+          this.dialogueSystem.closeDialogue();
+          return;
+        }
+        if (!this.dialogueSystem) this.dialogueSystem = new DialogueSystem();
+        this.dialogueSystem.showDialogue(
+          "You climbed to the top. The gate ahead pulses with light. Are you ready to move on?",
+          "Exit Warden",
+          this.spriteData.src
+        );
+        this.dialogueSystem.addButtons([
+          {
+            text: "Step Through",
+            primary: true,
+            action: () => {
+              this.dialogueSystem.closeDialogue();
+
+              const primaryGame = gameEnv.gameControl;
+
+              const fade = document.createElement('div');
+              Object.assign(fade.style, {
+                position: 'fixed',
+                top: '0', left: '0',
+                width: '100%', height: '100%',
+                backgroundColor: '#000',
+                opacity: '0',
+                transition: 'opacity 0.8s ease-in-out',
+                zIndex: '9999',
+                pointerEvents: 'none'
+              });
+              document.body.appendChild(fade);
+
+              requestAnimationFrame(() => {
+                fade.style.opacity = '1';
+                setTimeout(() => {
+                  const gameContainer = document.getElementById('gameContainer');
+                  if (gameContainer) {
+                    Array.from(gameContainer.children).forEach(child => {
+                      if (child.id !== 'promptDropDown') {
+                        gameContainer.removeChild(child);
+                      }
+                    });
+                  }
+
+                  const topGame = primaryGame?.parentControl || primaryGame;
+                  if (topGame) {
+                    topGame.levelClasses = [GameLevelDoors];
+                    topGame.currentLevelIndex = 0;
+                    topGame.isPaused = false;
+                    topGame.transitionToLevel();
+                  }
+                  setTimeout(() => {
+                    fade.style.opacity = '0';
+                    setTimeout(() => {
+                      if (fade.parentNode) fade.parentNode.removeChild(fade);
+                    }, 800);
+                  }, 400);
+                }, 800);
+              });
+            }
+          },
+          {
+            text: "Not yet",
+            action: () => this.dialogueSystem.closeDialogue()
+          }
+        ]);
+      }
+    };
+
+    // Coin — on ledge3 as a mid-climb reward
+    const sprite_data_coin = {
+      id: 'coin',
+      greeting: false,
+      INIT_POSITION: { x: 0.65, y: 0.33 },
+      width: 40,
+      height: 70,
+      color: '#FFD700',
+      hitbox: { widthPercentage: 0.0, heightPercentage: 0.0 },
+      zIndex: 12,
+      value: 1
+    };
+
+    // ── Level class list ──────────────────────────────────────────────────────
+    this.classes = [
+      { class: GameEnvBackground, data: image_data_cave },
+
+      // Floor and ledges
+      { class: Barrier, data: floor  },
+      { class: Barrier, data: ledge1 },
+      { class: Barrier, data: ledge2 },
+      { class: Barrier, data: ledge3 },
+      { class: Barrier, data: ledge4 },
+      { class: Barrier, data: ledge5 },
+
+      { class: Coin, data: sprite_data_coin },
+
+      { class: Npc,  data: sprite_data_shadow  },
+      { class: Npc,  data: sprite_data_lantern },
+      { class: Npc,  data: sprite_data_warden  },
+
+      { class: Player, data: sprite_data_octopus },
+    ];
+  }
+}
+
+export default GameLevelMazeSub;
