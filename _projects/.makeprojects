@@ -12,6 +12,7 @@
 # Games
 games/cs-pathway:dev
 games/gamify:dev
+games/escape-the-tower:dev
 
 # Systems
 #systems/student-management-groups

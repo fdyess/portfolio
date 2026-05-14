@@ -1,9 +1,9 @@
 ---
 layout: post
 codemirror: true
-title: Final Portfolio
-description: An introduction showing how to create JavaScript games.  Game Builder will start the design process. lessons using the UI Runner help understatn the parts of  for game development, canvas graphics, DOM manipulation, and interactive visualizations.
-permalink: /final-portfolio
+title: Sprint 6 Final Project
+description: CS111 evidence portfolio covering OOP, control structures, data types, and operators drawn directly from the Escape Game source code.
+permalink: /sprint6/final
 ---
 
 This page maps every required CS 111 learning objective to exact lines from the Escape Game source files. All code excerpts are taken directly from the project.
@@ -24,7 +24,6 @@ class GameLevelForestDeath {
   constructor(gameEnv) {
     console.log("Initializing GameLevelForestDeath...");
     this.gameEnv = gameEnv;
-    // ... sprite configs ...
     this.classes = [
       { class: GameEnvBackground, data: image_data_bg       },
       { class: Player,            data: sprite_data_player   },
@@ -48,14 +47,31 @@ class NpcAiChat {
     this.history      = [];
     this.container    = null;
   }
-  isOpen() { ... }
-  close()  { ... }
-  open()   { ... }
-  async _ask() { ... }
+  isOpen()           { return !!this.container && document.body.contains(this.container); }
+  close()            { if (!this.isOpen()) return; }
+  open()             { /* builds and injects full chat panel into DOM */ }
+  _bubble(text, who) { /* returns styled chat bubble element */ }
+  _typingBubble()    { /* returns animated 3-dot typing indicator */ }
+  async _ask()       { /* POST to Anthropic API, returns reply string */ }
 }
 ```
 
 All six level classes (`GameLevelMaze`, `GameLevelMazeSub`, `GameLevelDoors`, `GameLevelForest`, `GameLevelForestSub`, `GameLevelForestDeath`, `GameLevelForestWin`) follow this same pattern, each with their own NPC configurations, sprite data, and transition logic.
+
+Play the Forest Death level to see `GameLevelForestDeath` instantiated and running:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Forest Death Level | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelForestDeath from '@assets/js/projects/escape-game/levels/GameLevelForestDeath.js';
+import GameLevelForestSub from '@assets/js/projects/escape-game/levels/GameLevelForestSub.js';
+
+export const gameLevelClasses = [GameLevelForestDeath, GameLevelForestSub];
+export { GameControl };
+```
 
 ---
 
@@ -71,7 +87,6 @@ constructor(npcName, systemPrompt, avatarSrc) { ... }
 _bubble(text, who) {
   const row = document.createElement('div');
   // styles bubble differently depending on who === 'user' vs 'npc'
-  ...
   return row;
 }
 
@@ -93,14 +108,13 @@ async _ask() {
 }
 ```
 
-The `cleanAndTransition` helper in `GameLevelDoors.js` is a method with 2 parameters:
+The `cleanAndTransition` helper in `GameLevelDoors.js` takes 2 parameters:
 
 ```js
 // GameLevelDoors.js
 function cleanAndTransition(targetLevelClass, primaryGame) {
   // creates a fade overlay, clears the game container,
   // then calls primaryGame.transitionToLevel()
-  ...
 }
 ```
 
@@ -112,6 +126,36 @@ function launchSublevel(levelClass) {
   const primaryGame = gameEnv.gameControl;
   // ... fade, pause, new GameControl, start
 }
+```
+
+Run the code below to see the method signatures in action with real output:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Method signatures with parameters from the Escape Game
+
+// Mirrors cleanAndTransition(targetLevelClass, primaryGame) — GameLevelDoors.js
+function cleanAndTransition(targetLevelClass, primaryGame) {
+  return `Transitioning to: ${targetLevelClass} via: ${primaryGame}`;
+}
+
+// Mirrors _bubble(text, who) — NpcAiChat in GameLevelForestWin.js
+function _bubble(text, who) {
+  const align  = who === 'user' ? 'flex-end' : 'flex-start';
+  const radius = who === 'user' ? '10px 10px 2px 10px' : '10px 10px 10px 2px';
+  return { text, who, align, borderRadius: radius };
+}
+
+// Mirrors launchSublevel(levelClass) — GameLevelForestSub.js
+function launchSublevel(levelClass) {
+  return `Launching sublevel: ${levelClass}`;
+}
+
+console.log(cleanAndTransition('GameLevelForest', 'primaryGame'));
+console.log(JSON.stringify(_bubble("I came from the left.", "npc"), null, 2));
+console.log(JSON.stringify(_bubble("Go right.", "user"), null, 2));
+console.log(launchSublevel('GameLevelForestDeath'));
 ```
 
 ---
@@ -126,20 +170,16 @@ All game objects are instantiated through the `this.classes` array — a GameEng
 // GameLevelMazeSub.js
 this.classes = [
   { class: GameEnvBackground, data: image_data_cave },
-
   { class: Barrier, data: floor },
   { class: Barrier, data: step1 },
   { class: Barrier, data: step2 },
   { class: Barrier, data: step3 },
   { class: Barrier, data: step4 },
   { class: Barrier, data: step5 },
-
   { class: Coin,    data: sprite_data_coin    },
-
   { class: Npc,     data: sprite_data_shadow  },
   { class: Npc,     data: sprite_data_lantern },
   { class: Npc,     data: sprite_data_warden  },
-
   { class: Player,  data: sprite_data_octopus },
 ];
 ```
@@ -162,9 +202,62 @@ const doorSprites = doorConfigs.map((cfg, i) => {
 this.classes = [
   { class: GameEnvBackground, data: image_data_water },
   { class: Player,            data: sprite_data_octopus },
-  ...
-  ...doorSprites.map(data => ({ class: Npc, data }))   // spread into class list
+  ...doorSprites.map(data => ({ class: Npc, data }))
 ];
+```
+
+The code runner below simulates what the engine does internally when it reads `this.classes`:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Simulating GameEngine instantiation from this.classes
+
+class GameEnvBackground { constructor(data) { this.type = 'Background'; this.name = data.name; } }
+class Player  { constructor(data) { this.type = 'Player';  this.id = data.id; } }
+class Barrier { constructor(data) { this.type = 'Barrier'; this.id = data.id; } }
+class Npc     { constructor(data) { this.type = 'Npc';     this.id = data.id; } }
+class Coin    { constructor(data) { this.type = 'Coin';    this.id = data.id; } }
+
+// this.classes from GameLevelMazeSub.js — 12 entries
+const classes = [
+  { class: GameEnvBackground, data: { name: 'maze' } },
+  { class: Barrier, data: { id: 'floor' } },
+  { class: Barrier, data: { id: 'step1' } },
+  { class: Barrier, data: { id: 'step2' } },
+  { class: Barrier, data: { id: 'step3' } },
+  { class: Barrier, data: { id: 'step4' } },
+  { class: Barrier, data: { id: 'step5' } },
+  { class: Coin,    data: { id: 'coin'  } },
+  { class: Npc,     data: { id: 'Whispering Shadow' } },
+  { class: Npc,     data: { id: 'Lantern Keeper'    } },
+  { class: Npc,     data: { id: 'Exit Warden'       } },
+  { class: Player,  data: { id: 'Octopus'           } },
+];
+
+// What the GameEngine does internally
+const gameObjects = classes.map(entry => new entry.class(entry.data));
+
+gameObjects.forEach(obj => {
+  const label = obj.id ?? obj.name ?? '(unnamed)';
+  console.log(`[${obj.type.padEnd(12)}] ${label}`);
+});
+console.log(`\nTotal objects instantiated: ${gameObjects.length}`);
+```
+
+Play the Maze level to see all 12 of those objects running live:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Maze Sub Level | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelMaze from '@assets/js/projects/escape-game/levels/GameLevelMaze.js';
+import GameLevelMazeSub from '@assets/js/projects/escape-game/levels/GameLevelMazeSub.js';
+
+export const gameLevelClasses = [GameLevelMaze, GameLevelMazeSub];
+export { GameControl };
 ```
 
 ---
@@ -185,6 +278,26 @@ GameObject  (GameEngine base)
 
 All levels use the `extends` keyword through imported engine classes. `NpcAiChat` in `GameLevelForestWin.js` is a standalone custom class not extending an engine base, showing both patterns side by side in the same file.
 
+Play the full game to see every class in the hierarchy instantiated and running together:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Full Escape Game | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelMaze        from '@assets/js/projects/escape-game/levels/GameLevelMaze.js';
+import GameLevelMazeSub     from '@assets/js/projects/escape-game/levels/GameLevelMazeSub.js';
+import GameLevelDoors       from '@assets/js/projects/escape-game/levels/GameLevelDoors.js';
+import GameLevelForest      from '@assets/js/projects/escape-game/levels/GameLevelForest.js';
+import GameLevelForestSub   from '@assets/js/projects/escape-game/levels/GameLevelForestSub.js';
+import GameLevelForestWin   from '@assets/js/projects/escape-game/levels/GameLevelForestWin.js';
+import GameLevelForestDeath from '@assets/js/projects/escape-game/levels/GameLevelForestDeath.js';
+
+export const gameLevelClasses = [GameLevelMaze, GameLevelMazeSub, GameLevelDoors, GameLevelForest, GameLevelForestSub, GameLevelForestWin, GameLevelForestDeath];
+export { GameControl };
+```
+
 ---
 
 ### Method Overriding
@@ -204,7 +317,9 @@ interact: function() {
   const taunts = [
     "Oh, you came back to talk to me? Interesting.",
     "Still here? I'd have thought the shame would have driven you off.",
-    ...
+    "You know the right path is still there. Not that it'll help you.",
+    "BAWK BAWK. Classic. An absolute classic.",
+    "Fine. The fork is back that way."
   ];
   const msg = taunts[this._tauntIndex % taunts.length];
   this._tauntIndex++;
@@ -234,6 +349,30 @@ reaction: function() {
 }
 ```
 
+Run the code below to see the taunt cycling logic from `interact` in isolation:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Strange Beckoner taunt cycle — mirrors GameLevelForestDeath.js
+
+const taunts = [
+  "Oh, you came back to talk to me? Interesting.",
+  "Still here? I'd have thought the shame would have driven you off.",
+  "You know the right path is still there. Not that it'll help you.",
+  "BAWK BAWK. Classic. An absolute classic.",
+  "Fine. The fork is back that way."
+];
+
+// Simulates pressing interact 7 times — cycles back after 5
+let _tauntIndex = 0;
+for (let press = 1; press <= 7; press++) {
+  const msg = taunts[_tauntIndex % taunts.length];
+  console.log(`Press ${press}: "${msg}"`);
+  _tauntIndex++;
+}
+```
+
 ---
 
 ### Constructor Chaining
@@ -252,12 +391,26 @@ const villagerChat = new NpcAiChat('Villager',       PERSONA_VILLAGER,"/images/.
 ```js
 // GameLevelForest.js — constructor chaining via GameControl
 const gameInGame = new GameControl(gameEnv.game, levelArray, {
-  parentControl: primaryGame    // parent passed into child constructor
+  parentControl: primaryGame
 });
 gameInGame.start();
 gameInGame.gameOver = function() {
-  primaryGame.resume();         // child calls back to parent on completion
+  primaryGame.resume();
 };
+```
+
+Play the Forest Win level and talk to R2D2, the Village Elder, or the Villager — each one opens a separate `NpcAiChat` instance created from its own constructor chain:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Forest Win Level | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelForestWin from '@assets/js/projects/escape-game/levels/GameLevelForestWin.js';
+
+export const gameLevelClasses = [GameLevelForestWin];
+export { GameControl };
 ```
 
 ---
@@ -292,7 +445,7 @@ Array.from(gameContainer.children).forEach(child => {
 // GameLevelDoors.js
 const doorSprites = doorConfigs.map((cfg, i) => {
   const isCorrect = (i === correctIndex);
-  return { ...doorDefaults, id: cfg.id, src: cfg.src, INIT_POSITION: { x: xPositions[i], y: 0.5 }, ... };
+  return { ...doorDefaults, id: cfg.id, src: cfg.src, INIT_POSITION: { x: xPositions[i], y: 0.5 } };
 });
 ```
 
@@ -305,6 +458,58 @@ for (let i = 0; i < 3; i++) {
   d.style.animation = `npcDot 1s ease-in-out ${i * 0.18}s infinite`;
   b.appendChild(d);
 }
+```
+
+Run the code below to see the shuffle and `.map()` produce a new door layout every time:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Iteration — for loop shuffle + .map() from GameLevelDoors.js
+
+const doorConfigs = [
+  { id: 'Blue Door'   },
+  { id: 'Brown Door'  },
+  { id: 'Green Door'  },
+  { id: 'Orange Door' },
+  { id: 'Red Door'    },
+];
+
+// for loop — Fisher-Yates shuffle
+const xPositions = [0.2, 0.35, 0.5, 0.65, 0.8];
+console.log("Before shuffle:", [...xPositions]);
+for (let i = xPositions.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [xPositions[i], xPositions[j]] = [xPositions[j], xPositions[i]];
+}
+console.log("After shuffle: ", [...xPositions]);
+
+// .map() — builds door sprite data from config array
+const correctIndex = Math.floor(Math.random() * doorConfigs.length);
+const doorSprites  = doorConfigs.map((cfg, i) => ({
+  id:        cfg.id,
+  isCorrect: i === correctIndex,
+  x:         xPositions[i],
+}));
+
+console.log("\nDoor layout this run:");
+doorSprites.forEach(d =>
+  console.log(`  ${d.id.padEnd(14)} x=${d.x}  ${d.isCorrect ? '<-- CORRECT' : ''}`)
+);
+```
+
+Play the Doors level to see the shuffle running live — the doors appear in a different order every time the page loads:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Doors Level | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelDoors from '@assets/js/projects/escape-game/levels/GameLevelDoors.js';
+
+export const gameLevelClasses = [GameLevelDoors];
+export { GameControl };
 ```
 
 ---
@@ -340,18 +545,52 @@ if (topGame) {
 }
 ```
 
-**API response check** — `NpcAiChat.close()` guards against acting on an already-removed panel:
+**Guard conditional** — `NpcAiChat.close()` guards against acting on an already-removed panel:
 
 ```js
 // GameLevelForestWin.js
 close() {
-  if (!this.isOpen()) return;   // guard: nothing to close
+  if (!this.isOpen()) return;
   const panel   = this.container.querySelector('.npc-chat-panel');
   const overlay = this.container.querySelector('.npc-chat-overlay');
-  if (panel)   { panel.style.opacity = '0'; ... }
+  if (panel)   { panel.style.opacity = '0'; }
   if (overlay) { overlay.style.opacity = '0'; }
-  ...
 }
+```
+
+Run the code below to see the dialogue guard and transition conditional in isolation:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Conditionals — NPC dialogue guard + state transition
+
+const dialogueSystem = {
+  _open: false,
+  isDialogueOpen() { return this._open; },
+  openDialogue()   { this._open = true;  console.log("  -> Dialogue opened"); },
+  closeDialogue()  { this._open = false; console.log("  -> Dialogue closed"); },
+};
+
+function interact(dialogueSystem) {
+  if (dialogueSystem && dialogueSystem.isDialogueOpen()) {
+    dialogueSystem.closeDialogue();
+    return;
+  }
+  dialogueSystem.openDialogue();
+}
+
+console.log("First interact (dialogue closed):");
+interact(dialogueSystem);
+console.log("Second interact (dialogue already open):");
+interact(dialogueSystem);
+console.log("Third interact (closed again):");
+interact(dialogueSystem);
+
+// Mirrors Exit Warden transition conditional from GameLevelMazeSub.js
+const primaryGame = { parentControl: { name: 'topLevelGame' } };
+const topGame = primaryGame?.parentControl || primaryGame;
+console.log(`\nTransition target: ${topGame.name}`);
 ```
 
 ---
@@ -403,7 +642,6 @@ const doorSprites = doorConfigs.map((cfg, i) => {
 const send = async () => {
   const text = input.value.trim();
   if (!text) return;                          // level 1: skip empty input
-  ...
   try {
     const reply = await this._ask();
     if (reply) {                              // level 2: valid reply
@@ -415,6 +653,47 @@ const send = async () => {
     console.error('NPC AI error:', e);
   }
 };
+```
+
+Run the code below to see the door picker nested logic produce different results each run:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Nested conditions — door picker from GameLevelDoors.js
+
+const doorConfigs = [
+  { id: 'Blue Door',   deadEnd: "The blue light flickers. Nothing lies beyond."  },
+  { id: 'Brown Door',  deadEnd: "Splinters and cobwebs. Nothing lies beyond."    },
+  { id: 'Green Door',  deadEnd: "Roots and earth block the way."                 },
+  { id: 'Orange Door', deadEnd: "A wall of heat forces you back."                },
+  { id: 'Red Door',    deadEnd: "A cold dread seizes your hand. Not this one."   },
+];
+
+const correctIndex = Math.floor(Math.random() * doorConfigs.length);
+let dialogueOpen   = false;
+
+function interact(i) {
+  const isCorrect = (i === correctIndex);          // level 1
+
+  if (dialogueOpen) {                              // level 2: dialogue already open
+    console.log(`  [${doorConfigs[i].id}] Closing open dialogue`);
+    dialogueOpen = false;
+    return;
+  }
+
+  if (isCorrect) {
+    dialogueOpen = true;
+    console.log(`  [${doorConfigs[i].id}] Correct door! Showing transition prompt...`);
+    console.log(`  -> Would call: cleanAndTransition(GameLevelForest, primaryGame)`); // level 3
+  } else {
+    dialogueOpen = true;
+    console.log(`  [${doorConfigs[i].id}] Dead end: "${doorConfigs[i].deadEnd}"`);
+  }
+}
+
+console.log(`Correct door this run: ${doorConfigs[correctIndex].id}\n`);
+doorConfigs.forEach((_, i) => interact(i));
 ```
 
 ---
@@ -573,6 +852,76 @@ body: JSON.stringify({
 }),
 ```
 
+Run the code below to see all five data types printed from real sprite config values:
+
+```javascript
+%%js
+
+// CODE_RUNNER: All five data types from real Escape Game sprite configs
+
+// Numbers
+const OCTOPUS_SCALE_FACTOR = 5;
+const sprite_data_octopus = {
+  SCALE_FACTOR:   OCTOPUS_SCALE_FACTOR,
+  STEP_FACTOR:    1000,
+  ANIMATION_RATE: 50,
+  INIT_POSITION:  { x: 0.05, y: 0.85 },
+  pixels:         { height: 250, width: 167 },
+};
+
+// Strings
+const sprite_data_wraith = {
+  id:       'The Wraith',
+  greeting: "...it took my family. Both paths lead somewhere.",
+  src:      "/images/projects/escape-game/tux.png",
+};
+
+// Booleans
+const forestGravity = false;
+const mazeGravity   = true;
+const isCorrect     = (2 === Math.floor(Math.random() * 5));
+
+// Arrays
+const dialogues  = [
+  "...it took my family. Both paths lead somewhere.",
+  "The trees shift when the fog comes in.",
+  "I wandered left. I ended up here. I cannot leave.",
+  "Follow the light... if you can find any."
+];
+const xPositions = [0.2, 0.35, 0.5, 0.65, 0.8];
+const history    = [];
+history.push({ role: 'user',      content: "Which way should I go?" });
+history.push({ role: 'assistant', content: "The right path feels heavier." });
+
+// Objects (JSON)
+const sprite_data_r2d2 = {
+  id:             'R2D2',
+  SCALE_FACTOR:   8,
+  pixels:         { height: 223, width: 505 },
+  INIT_POSITION:  { x: 0.82,    y: 0.35   },
+  orientation:    { rows: 1, columns: 3   },
+  hitbox:         { widthPercentage: 0.1, heightPercentage: 0.2 },
+};
+
+console.log("=== Numbers ===");
+console.log(`SCALE: ${sprite_data_octopus.SCALE_FACTOR}  STEP: ${sprite_data_octopus.STEP_FACTOR}  ANIM: ${sprite_data_octopus.ANIMATION_RATE}`);
+
+console.log("\n=== Strings ===");
+console.log(`id: "${sprite_data_wraith.id}"`);
+console.log(`greeting: "${sprite_data_wraith.greeting}"`);
+
+console.log("\n=== Booleans ===");
+console.log(`forestGravity: ${forestGravity}  mazeGravity: ${mazeGravity}  isCorrect: ${isCorrect}`);
+
+console.log("\n=== Arrays ===");
+console.log(`dialogues[0]: "${dialogues[0]}"`);
+console.log(`xPositions: [${xPositions}]`);
+console.log(`history entries: ${history.length}`);
+
+console.log("\n=== Object (JSON) ===");
+console.log(JSON.stringify(sprite_data_r2d2, null, 2));
+```
+
 ---
 
 ## Operators
@@ -645,4 +994,79 @@ if (!this.isOpen()) return;
 
 // GameLevelForestWin.js — optional chaining + nullish coalescing
 return data.content.find(b => b.type === 'text')?.text ?? '...';
+```
+
+Run the code below to see all three operator types produce output from real game logic:
+
+```javascript
+%%js
+
+// CODE_RUNNER: Operators — mathematical, string, boolean from the Escape Game
+
+// Mathematical — barrier geometry (GameLevelMazeSub.js)
+const width = 800, height = 400;
+function b(id, rx, ry, rw, rh) {
+  return {
+    id,
+    x:      Math.round(rx * width),
+    y:      Math.round(ry * height),
+    width:  Math.round(rw * width),
+    height: Math.round(rh * height),
+  };
+}
+const step3 = b('step3', 0.41, 0.40, 0.22, 0.03);
+console.log("=== Mathematical ===");
+console.log(`step3: x=${step3.x} y=${step3.y} w=${step3.width} h=${step3.height}`);
+
+let _tauntIndex = 3;
+const taunts = ["Taunt A", "Taunt B", "Taunt C"];
+console.log(`Modulo taunt (3 % 3 = ${3 % 3}): "${taunts[_tauntIndex % taunts.length]}"  next index: ${++_tauntIndex}`);
+
+const correctIndex = Math.floor(Math.random() * 5);
+console.log(`Correct door index (Math.floor * Math.random): ${correctIndex}`);
+
+// String Operations — template literals (GameLevelForestWin.js)
+console.log("\n=== String Operations ===");
+const who = 'user', status = 400;
+console.log(`CSS justify: "justify-content:${who === 'user' ? 'flex-end' : 'flex-start'}"`);
+console.log(`Error string: "API ${status}"`);
+const npcName = 'R2D2';
+const greeting = {
+  'R2D2':          'Bweeeep! You made it! Ask me anything!',
+  'Village Elder': "We don't get many travellers here.",
+  'Villager':      "Oh! A new face! It's been so long!",
+}[npcName] || 'Hello, traveller.';
+console.log(`Key lookup for "${npcName}": "${greeting}"`);
+
+// Boolean Expressions — &&, ||, !, ?., ??
+console.log("\n=== Boolean Expressions ===");
+const dialogueSystem = { _open: true, isDialogueOpen() { return this._open; } };
+console.log(`&& guard (dialogue open): ${dialogueSystem && dialogueSystem.isDialogueOpen()}`);
+const primaryGame = { parentControl: null };
+const topGame = primaryGame?.parentControl || primaryGame;
+console.log(`|| fallback — topGame is primaryGame: ${topGame === primaryGame}`);
+console.log(`! negation (!false): ${!false}`);
+const data = { content: [{ type: 'text', text: 'Hello traveller.' }] };
+const reply = data.content.find(b => b.type === 'text')?.text ?? '...';
+console.log(`?. and ?? reply: "${reply}"`);
+```
+
+Play the full game one more time as a final demo — every operator, data type, and control structure on this page is running live inside:
+
+```javascript
+%%js
+
+// GAME_RUNNER: Full Escape Game | hide_edit: true, width: 100%, height: 500px
+
+import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
+import GameLevelMaze        from '@assets/js/projects/escape-game/levels/GameLevelMaze.js';
+import GameLevelMazeSub     from '@assets/js/projects/escape-game/levels/GameLevelMazeSub.js';
+import GameLevelDoors       from '@assets/js/projects/escape-game/levels/GameLevelDoors.js';
+import GameLevelForest      from '@assets/js/projects/escape-game/levels/GameLevelForest.js';
+import GameLevelForestSub   from '@assets/js/projects/escape-game/levels/GameLevelForestSub.js';
+import GameLevelForestWin   from '@assets/js/projects/escape-game/levels/GameLevelForestWin.js';
+import GameLevelForestDeath from '@assets/js/projects/escape-game/levels/GameLevelForestDeath.js';
+
+export const gameLevelClasses = [GameLevelMaze, GameLevelMazeSub, GameLevelDoors, GameLevelForest, GameLevelForestSub, GameLevelForestWin, GameLevelForestDeath];
+export { GameControl };
 ```
