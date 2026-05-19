@@ -73,11 +73,11 @@ This page maps every required CS 111 learning objective to exact lines from the 
 | Done | Objective | Evidence |
 |------|-----------|----------|
 | ☑ | Console Debugging | `console.log("Initializing GameLevelForestDeath...")`, `console.error('NPC AI error:', e)`, `console.log` in all code runners |
-| ☐ | Hit Box Visualization | Used to debug the game |
-| ☐ | Source-Level Debugging | Used to debug the game |
-| ☐ | Network Debugging | Used to debug the game, like finding why imports aren't working |
-| ☐ | Application Debugging | Used to debug the game |
-| ☐ | Element Inspection | Used to debug the game, such as fixing wrong import paths |
+| ☐ | Hit Box Visualization | Tuned widthPercentage and heightPercentage on all sprite hitboxes in GameLevelMazeSub.js by toggling the GameEngine's hitbox overlay |
+| ☐ | Source-Level Debugging | Set a breakpoint on line 54 of GameLevelForestDeath.js to step through if (dist < 50 && !chaseState.caught) and find the correct catch threshold |
+| ☐ | Network Debugging | Used the Network tab to find GameLevelForestSub.js returning a 404 while all other scripts loaded 200 — traced to a mismatched import path |
+| ☐ | Application Debugging | Inspected the DOM to find stale canvas elements left behind after sublevel transitions; fixed with Array.from(gameContainer.children).forEach(...) cleanup |
+| ☐ | Element Inspection | Console showed TypeError: Failed to fetch dynamically imported module from GameExecutor.js:338; traced the blob import failure back to a renamed file with an outdated import string |
 
 ### Testing & Verification
 
