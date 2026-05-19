@@ -1490,6 +1490,7 @@ if (dist < 50 && !chaseState.caught) {   // value found by watching dist in DevT
   this.onCaught(beckoner, player);
 }
 ```
+![Breakpoint set on line 54 of GameLevelForestDeath.js in Chrome DevTools](images/breakpoint.png)
 
 ### Network Debugging
 
@@ -1502,6 +1503,7 @@ const sprite_data_wraith = {
   src: path + "/images/gamify/tux.png",   // Network tab confirmed this resolved correctly
 };
 ```
+![Network tab showing GameLevelForestSub.js returning a 404](images/network-error.png)
 
 ### Application Debugging
 
@@ -1521,7 +1523,7 @@ if (gameContainer) {
 
 The browser's Element Inspector was used to fix incorrect import paths. Early in development, several levels were importing from the wrong directory. Inspecting the `<script>` elements that the engine injected into the page and checking their `src` attributes made it possible to see which paths were resolving and which weren't.
 
-*[Add screenshot of Element Inspector showing script tags here]*
+![Chrome DevTools console showing a failed dynamic import error](images/element-inspect.png)
 
 ---
 
