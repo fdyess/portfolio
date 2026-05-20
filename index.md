@@ -35,12 +35,12 @@ Hi! My name is Finn Dyess.
 
 ### Final Portfolio
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    <a href="{{site.baseurl}}/sprint6/final style="text-decoration: none;">
+    <a href="{{site.baseurl}}/sprint6/college-portfolio" style="text-decoration: none;">
         <div style="background-color: var(--blue); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;">
            Click here to view my final portfolio
         </div>
     </a>
-<div>
+</div>
 
 ### My Lessons
 
@@ -80,7 +80,7 @@ Hi! My name is Finn Dyess.
     <a href="{{site.baseurl}}/gamify/escapethetower" class="btn">
         Escape the Tower
     </a>
-    <a href="{{site.baseurl}}/gamify/parallax" class="btn" style="background-color: var(--green); ">
+    <a href="{{site.baseurl}}/gamify/parallax" class="btn" style="background-color: var(--green);">
         Fish
     </a>
     <a href="{{site.baseurl}}/gamify" class="btn" style="background-color: var(--teal);">
@@ -88,9 +88,6 @@ Hi! My name is Finn Dyess.
     </a>
     <a href="{{site.baseurl}}/cs-pathway" class="btn" style="background-color: var(--orange);">
        CS Pathway
-    </a>
-    <a href="{{site.baseurl}}/gamify/escapethetower" class="btn">
-        Escape the Tower
     </a>
 </div>
 
