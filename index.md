@@ -35,7 +35,7 @@ Hi! My name is Finn Dyess.
 
 ### Final Portfolio
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    <a href="{{site.baseurl}}/sprint6/college-portfolio" style="text-decoration: none;">
+    <a href="{{site.baseurl}}/college-portfolio" style="text-decoration: none;">
         <div style="background-color: var(--blue); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;">
            Click here to view my final portfolio
         </div>
